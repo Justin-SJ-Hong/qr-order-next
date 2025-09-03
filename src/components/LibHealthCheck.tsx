@@ -259,7 +259,7 @@ export default function LibHealthCheck() {
                         </pre>
                     )}
                     {!hello && !isFetchingHello && !helloError && (
-                        <p className="text-sm text-muted-foreground">아직 호출하지 않았습니다. "호출하기"를 눌러보세요.</p>
+                        <p className="text-sm text-muted-foreground">아직 호출하지 않았습니다. &quot;호출하기&quot;를 눌러보세요.</p>
                     )}
                 </section>
 
@@ -330,7 +330,7 @@ export default function LibHealthCheck() {
                     )}
                     
                     {!dbHealth && !isFetchingDb && !dbError && (
-                        <p className="text-sm text-muted-foreground">아직 연결 테스트를 하지 않았습니다. "연결 테스트"를 눌러보세요.</p>
+                        <p className="text-sm text-muted-foreground">아직 연결 테스트를 하지 않았습니다. &quot;연결 테스트&quot;를 눌러보세요.</p>
                     )}
                 </section>
 

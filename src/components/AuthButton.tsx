@@ -41,8 +41,9 @@ export default function AuthButton() {
         if (error) throw error
         setError('회원가입이 완료되었습니다. 이메일을 확인해주세요.')
       }
-    } catch (error: any) {
-      setError(error.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(message)
     } finally {
       setLoading(false)
     }
