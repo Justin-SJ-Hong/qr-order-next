@@ -51,7 +51,6 @@ export async function middleware(req: NextRequest) {
 
         // 쿠키에서 세션 확인
         const accessToken = req.cookies.get('sb-access-token')?.value
-        const refreshToken = req.cookies.get('sb-refresh-token')?.value
 
         if (accessToken) {
             const { data: { user }, error } = await supabase.auth.getUser(accessToken)
