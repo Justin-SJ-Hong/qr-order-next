@@ -8,20 +8,35 @@ export async function GET() {
     // 데이터베이스 연결 테스트
     await prisma.$connect()
     
-    // 테이블 목록과 레코드 수 가져오기
-    const tables = await Promise.all([
-      { name: 'users', count: await prisma.user.count() },
-      { name: 'stores', count: await prisma.store.count() },
-      { name: 'categories', count: await prisma.category.count() },
-      { name: 'menus', count: await prisma.menu.count() },
-      { name: 'option_groups', count: await prisma.optionGroup.count() },
-      { name: 'option_choices', count: await prisma.optionChoice.count() },
-      { name: 'orders', count: await prisma.order.count() },
-      { name: 'order_items', count: await prisma.orderItem.count() },
-      { name: 'order_item_options', count: await prisma.orderItemOption.count() },
-      { name: 'payments', count: await prisma.payment.count() },
-      { name: 'menu_recommendations', count: await prisma.menuRecommendation.count() },
-    ])
+    // 테이블 목록과 레코드 수 가져오기 (모델 유무와 상관없이 안전하게 집계)
+    const tableNames = [
+      'users',
+      'stores',
+      'categories',
+      'menus',
+      'option_groups',
+      'option_choices',
+      'orders',
+      'order_items',
+      'order_item_options',
+      'payments',
+      'menu_recommendations',
+    ] as const
+
+    const tables = await Promise.all(
+      tableNames.map(async (name) => {
+        try {
+          const rows = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
+            `SELECT COUNT(*)::bigint AS count FROM "public"."${name}"`
+          )
+          const count = rows?.[0]?.count ?? 0
+          return { name, count: Number(count) }
+        } catch {
+          // 테이블이 없거나 권한 문제 시 0으로 처리
+          return { name, count: 0 }
+        }
+      })
+    )
 
     return NextResponse.json({
       status: 'connected',

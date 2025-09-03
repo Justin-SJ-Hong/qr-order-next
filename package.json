@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
@@ -51,5 +51,20 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "packageManager": "npm@10",
+  "overrides": {},
+  "engines": {
+    "node": ">=18"
+  },
+  "pnpm": {},
+  "optionalDependencies": {},
+  "peerDependenciesMeta": {},
+  "dependenciesMeta": {},
+  "resolutions": {},
+  "workspaces": [],
+  "husky": {},
+  "lint-staged": {},
+  "ci": {},
+  "postinstall": "prisma generate"
 }
