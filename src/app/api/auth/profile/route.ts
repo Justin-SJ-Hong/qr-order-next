@@ -33,15 +33,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (!userProfile) {
-      // 새 사용자 생성
+      // 새 사용자 생성 (현재 User 모델에는 role/status가 없습니다)
       userProfile = await prisma.user.create({
         data: {
           id,
           email,
           name: name || email.split('@')[0],
-          role: 'CUSTOMER', // 기본값
-          status: 'ACTIVE',
-          updatedAt: new Date(),
         }
       })
     } else {
@@ -51,7 +48,6 @@ export async function POST(request: NextRequest) {
         data: {
           email,
           name: name || userProfile.name,
-          updatedAt: new Date(),
         }
       })
     }
@@ -62,8 +58,6 @@ export async function POST(request: NextRequest) {
         id: userProfile.id,
         email: userProfile.email,
         name: userProfile.name,
-        role: userProfile.role,
-        status: userProfile.status,
       }
     })
 
@@ -78,7 +72,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = supabaseServer()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -97,9 +91,7 @@ export async function GET(request: NextRequest) {
         id: true,
         email: true,
         name: true,
-        role: true,
-        status: true,
-        lastLoginAt: true,
+        avatar: true,
         createdAt: true,
         updatedAt: true,
       }
@@ -112,11 +104,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 마지막 로그인 시간 업데이트
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() }
-    })
+    // (선택) 마지막 로그인 업데이트 필드가 없는 모델이라면 생략
 
     return NextResponse.json({
       success: true,
