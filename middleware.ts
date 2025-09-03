@@ -16,7 +16,23 @@ export async function middleware(req: NextRequest) {
             reqHeaders.delete(k)
         }
     }
+    // 요청별 nonce 생성
+    const nonce = crypto.randomUUID()
     const next = NextResponse.next({ request: { headers: reqHeaders } })
+    // 클라이언트에서 읽을 수 있도록 전달
+    next.headers.set('x-nonce', nonce)
+    // CSP 적용 (필요한 지시어만 최소 적용)
+    const csp = [
+        "default-src 'self'",
+        `script-src 'self' 'nonce-${nonce}' 'wasm-unsafe-eval' 'inline-speculation-rules'`,
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: blob:",
+        "connect-src *",
+        "frame-ancestors 'self'",
+        "base-uri 'self'",
+        "form-action 'self'",
+    ].join('; ')
+    next.headers.set('Content-Security-Policy', csp)
 
     // 2) 보호 경로 접근 제어
     const needsAuth = PROTECTED.some((re) => re.test(pathname))
