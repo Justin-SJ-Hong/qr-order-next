@@ -1,0 +1,256 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String     @id @default(cuid())
+  email       String     @unique
+  name        String?
+  role        UserRole   @default(CUSTOMER)
+  status      UserStatus @default(ACTIVE)
+  lastLoginAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  orders      Order[]
+  stores      Store[]
+
+  @@map("users")
+}
+
+model Store {
+  id                  String               @id @default(cuid())
+  ownerId             String
+  name                String
+  phone               String?
+  address             String?
+  status              StoreStatus          @default(OPEN)
+  settings            String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  categories          Category[]
+  menuRecommendations MenuRecommendation[]
+  menus               Menu[]
+  orders              Order[]
+  owner               User                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("stores")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  storeId   String
+  name      String
+  sort      Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  menus     Menu[]
+
+  @@map("categories")
+}
+
+model Menu {
+  id                    String               @id @default(cuid())
+  storeId               String
+  categoryId            String
+  name                  String
+  desc                  String?
+  price                 Int
+  imageUrl              String?
+  isActive              Boolean              @default(true)
+  sort                  Int
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  sourceRecommendations MenuRecommendation[] @relation("SourceMenu")
+  targetRecommendations MenuRecommendation[] @relation("TargetMenu")
+  category              Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  store                 Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  optionGroups          OptionGroup[]
+  orderItems            OrderItem[]
+
+  @@map("menus")
+}
+
+model OptionGroup {
+  id        String          @id @default(cuid())
+  menuId    String
+  name      String
+  type      OptionGroupType
+  min       Int
+  max       Int
+  sort      Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  choices   OptionChoice[]
+  menu      Menu            @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@map("option_groups")
+}
+
+model OptionChoice {
+  id         String      @id @default(cuid())
+  groupId    String
+  name       String
+  priceDelta Int
+  isActive   Boolean     @default(true)
+  sort       Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  group      OptionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("option_choices")
+}
+
+model Order {
+  id         String       @id @default(cuid())
+  orderNo    String       @unique
+  userId     String?
+  storeId    String
+  channel    OrderChannel
+  status     OrderStatus  @default(PLACED)
+  subtotal   Int
+  discount   Int
+  total      Int
+  orderedAt  DateTime     @default(now())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  orderItems OrderItem[]
+  store      Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user       User?        @relation(fields: [userId], references: [id])
+  payments   Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String            @id @default(cuid())
+  orderId   String
+  menuId    String
+  nameSnap  String
+  qty       Int
+  unitPrice Int
+  lineTotal Int
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  options   OrderItemOption[]
+  menu      Menu              @relation(fields: [menuId], references: [id])
+  order     Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model OrderItemOption {
+  id          String    @id @default(cuid())
+  orderItemId String
+  groupName   String
+  choiceName  String
+  priceDelta  Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@map("order_item_options")
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String
+  method    PaymentMethod
+  status    PaymentStatus @default(PENDING)
+  amount    Int
+  currency  String        @default("KRW")
+  txId      String?
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  order     Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model MenuRecommendation {
+  id           String             @id @default(cuid())
+  storeId      String
+  sourceMenuId String
+  targetMenuId String
+  kind         RecommendationKind
+  atStep       RecommendationStep
+  priority     Int
+  isActive     Boolean            @default(true)
+  startAt      DateTime?
+  endAt        DateTime?
+  condition    String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  sourceMenu   Menu               @relation("SourceMenu", fields: [sourceMenuId], references: [id], onDelete: Cascade)
+  store        Store              @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  targetMenu   Menu               @relation("TargetMenu", fields: [targetMenuId], references: [id], onDelete: Cascade)
+
+  @@map("menu_recommendations")
+}
+
+enum UserRole {
+  CUSTOMER
+  OWNER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum StoreStatus {
+  OPEN
+  CLOSED
+}
+
+enum OptionGroupType {
+  SINGLE
+  MULTI
+}
+
+enum OrderChannel {
+  APP
+  POS
+}
+
+enum OrderStatus {
+  PLACED
+  PAID
+  PREPARING
+  DONE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  MOCK
+  CARD
+  TOSSPAY
+  KAKAOPAY
+  NPAY
+  TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum RecommendationKind {
+  UPSELL
+  DOWNSELL
+}
+
+enum RecommendationStep {
+  MENU_DETAIL
+  CART
+  CHECKOUT
+}
