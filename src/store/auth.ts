@@ -1,6 +1,6 @@
 // src/store/auth.ts
 import { create } from 'zustand'
-import { User, Session } from '@supabase/supabase-js'
+import type { User, Session } from '@supabase/supabase-js'
 
 type AuthState = {
     user: User | null
