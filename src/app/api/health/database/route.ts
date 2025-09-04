@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
 
 export async function GET() {
   try {
@@ -28,9 +27,9 @@ export async function GET() {
     const tables = await Promise.all(
       tableNames.map(async (name) => {
         try {
-          const rows = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
+          const rows = await prisma.$queryRawUnsafe(
             `SELECT COUNT(*)::bigint AS count FROM "public"."${name}"`
-          )
+          ) as Array<{ count: bigint }>
           const count = rows?.[0]?.count ?? 0
           return { name, count: Number(count) }
         } catch {
