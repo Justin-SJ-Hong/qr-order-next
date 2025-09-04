@@ -8,7 +8,7 @@ export async function GET() {
     // Supabase 클라이언트 생성 (서버 사이드)
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY! // 서비스 롤 키 사용
+      process.env.SUPABASE_SERVICE_ROLE! // 서비스 롤 키 사용
     )
 
     // 테이블 목록과 레코드 수 가져오기
