@@ -66,27 +66,6 @@ async function fetchEdgeHello() {
     return res.json() as Promise<unknown>
 }
 
-// Supabase 데이터베이스 연결 테스트
-async function fetchDatabaseHealth() {
-    const res = await fetch('/api/health/database', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    
-    if (!res.ok) {
-        const text = await res.text().catch(() => '')
-        throw new Error(`Database health check failed: ${res.status} ${text}`)
-    }
-    
-    return res.json() as Promise<{
-        status: 'connected' | 'error'
-        tables: Array<{ name: string; count: number }>
-        timestamp: string
-        error?: string
-    }>
-}
 
 // ... existing code ...
 export default function LibHealthCheck() {
@@ -116,15 +95,34 @@ export default function LibHealthCheck() {
         refetchOnWindowFocus: false,
     })
 
-    // Supabase 데이터베이스 연결 테스트
+    // Supabase 데이터베이스 연결 테스트 (간단한 버전)
     const {
         data: dbHealth,
         isFetching: isFetchingDb,
         error: dbError,
         refetch: refetchDb,
     } = useQuery({
-        queryKey: ['database-health'],
-        queryFn: fetchDatabaseHealth,
+        queryKey: ['database-health-simple'],
+        queryFn: async () => {
+            const res = await fetch('/api/health/database-simple', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!res.ok) {
+                const text = await res.text().catch(() => '')
+                throw new Error(`Database health check failed: ${res.status} ${text}`)
+            }
+
+            return res.json() as Promise<{
+                status: 'connected' | 'error'
+                tables: Array<{ name: string; count: number }>
+                timestamp: string
+                error?: string
+            }>
+        },
         refetchOnWindowFocus: false,
     })
 
