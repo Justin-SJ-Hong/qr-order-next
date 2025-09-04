@@ -68,9 +68,9 @@ async function fetchEdgeHello() {
 
 
 // ... existing code ...
-export default function LibHealthCheck() {
+function LibHealthCheck() {
     const [showAdvanced, setShowAdvanced] = useState(false)
-
+    
     // Zustand 사용
     const { count, inc, dec, reset } = useCounterStore()
     
@@ -420,5 +420,14 @@ export default function LibHealthCheck() {
             </main>
         </div>
     )
+}
+
+// 개발 환경에서만 표시하는 래퍼 컴포넌트
+export default function LibHealthCheckWrapper() {
+    if (process.env.NODE_ENV === 'production') {
+        return null
+    }
+    
+    return <LibHealthCheck />
 }
 // ... existing code ...
