@@ -78,7 +78,6 @@ const statusLabel: Record<OrderStatus, string> = {
 
 export default function OrdersPage() {
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [methodFilter, setMethodFilter] = useState<"all" | "card" | "cash" | "coupon">(
     "all"
   );
@@ -123,7 +122,6 @@ export default function OrdersPage() {
         r.id.includes(query) ||
         r.tableName.includes(query) ||
         r.orderAt.includes(query);
-      const matchesStatus = statusFilter === "all" || r.status === statusFilter;
       const matchesMethod = methodFilter === "all" || r.method === methodFilter;
       // 기간 필터 체크 (둘 다 지정된 경우에만 필터링)
       let matchesRange = true;
@@ -135,9 +133,9 @@ export default function OrdersPage() {
           matchesRange = d >= start && d <= end;
         }
       }
-      return matchesQuery && matchesStatus && matchesMethod && matchesRange;
+      return matchesQuery && matchesMethod && matchesRange;
     });
-  }, [query, statusFilter, methodFilter, rows, startDate, endDate]);
+  }, [query, methodFilter, rows, startDate, endDate]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = useMemo(() => {
