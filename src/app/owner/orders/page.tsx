@@ -207,7 +207,7 @@ export default function OrdersPage() {
 
           <Select
             value={methodFilter}
-            onChange={(e) => setMethodFilter(e.target.value as any)}
+            onChange={(e) => setMethodFilter(e.target.value)}
             displayEmpty
             sx={{ width: 140 }}
           >
@@ -388,7 +388,7 @@ export default function OrdersPage() {
         onClose={handleCloseRange}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
-        slotProps={{ paper: { sx: { p: 2, borderRadius: 2 } } as any }}
+        slotProps={{ paper: { sx: { p: 2, borderRadius: 2 } } }}
       >
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ minWidth: 320 }}>
           <TextField
