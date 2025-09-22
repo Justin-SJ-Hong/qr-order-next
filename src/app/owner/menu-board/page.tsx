@@ -13,7 +13,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Paper,
   Dialog,
@@ -27,13 +26,10 @@ import {
   Close as CloseIcon,
   Add as AddIcon,
   Check as CheckIcon,
-  Visibility as VisibilityIcon,
-  ArrowUpward as ArrowUpwardIcon,
   Search as SearchIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 type MenuItem = {
   id: string;
@@ -78,7 +74,6 @@ const availableMenuItems: MenuItem[] = [
 ];
 
 export default function MenuBoardPage() {
-  const router = useRouter();
   const [categories, setCategories] = useState(initialCategories);
   const [selectedCategoryId, setSelectedCategoryId] = useState("1");
   const [activeTab, setActiveTab] = useState("edit");
@@ -352,7 +347,7 @@ export default function MenuBoardPage() {
                     <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #E5E7EB" }}>
                       <Table>
                         <TableBody>
-                          {selectedCategory?.items.map((item, index) => (
+                          {selectedCategory?.items.map((item) => (
                             <TableRow key={item.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                               <TableCell sx={{ width: 52, borderColor: "#E5E7EB" }}>
                                 <DragIndicatorIcon sx={{ fontSize: 20, color: "#6B7280" }} />
