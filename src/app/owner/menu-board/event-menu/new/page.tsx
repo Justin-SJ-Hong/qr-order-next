@@ -83,7 +83,7 @@ export default function EventMenuNewPage() {
                     type="number"
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
-                    sx={{ width: 200 }}
+                    sx={{ flex: 1 }}
                     InputProps={{ endAdornment: <Typography sx={{ color: "rgba(0,0,0,0.9)", fontSize: 16 }}>{discountUnit}</Typography> }}
                   />
 
