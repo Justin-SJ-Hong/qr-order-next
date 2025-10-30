@@ -1,4 +1,3 @@
-import LibHealthCheckWrapper from "@/components/LibHealthCheck";
 import Link from "next/link";
 import { Button, Box, Typography, Container } from "@mui/material";
 
@@ -15,27 +14,16 @@ export default function Home() {
                 
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                     <Button 
-                        variant="contained" 
-                        size="large" 
-                        component={Link} 
-                        href="/test"
-                        sx={{ minWidth: 200 }}
-                    >
-                        🚀 시스템 상태 확인
-                    </Button>
-                    <Button 
                         variant="outlined" 
                         size="large" 
                         component={Link} 
-                        href="/dashboard"
+                        href="/owner/menu-board"
                         sx={{ minWidth: 200 }}
                     >
                         📊 관리자 대시보드
                     </Button>
                 </Box>
             </Box>
-            
-            <LibHealthCheckWrapper />
         </Container>
     )
 }

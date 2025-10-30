@@ -1,14 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import { Box, Stack, Typography } from "@mui/material";
 import { ArrowUpward as ArrowUpwardIcon } from "@mui/icons-material";
-import { usePathname } from "next/navigation";
 
-export default function MenuBoardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  const isActive = (href: string) => pathname === href;
+export default function MenuBoardLayout({ 
+  children,
+  params: { section }
+}: { children: React.ReactNode, params: { section: string } }) {
+  const activeSection = section;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", width: "100%", bgcolor: "#F9FAFB" }}>
@@ -53,10 +51,10 @@ export default function MenuBoardLayout({ children }: { children: React.ReactNod
                 p: "8px 12px",
                 borderRadius: 1,
                 cursor: "pointer",
-                bgcolor: isActive("/owner/menu-board") ? "white" : "transparent",
+                bgcolor: activeSection === "menu-board" ? "white" : "transparent",
               }}
             >
-              <Typography sx={{ fontSize: 16, fontWeight: 600, color: isActive("/owner/menu-board") ? "#1F60FF" : "#6B7280" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: activeSection === "menu-board" ? "#1F60FF" : "#6B7280" }}>
                 메뉴판 편집
               </Typography>
             </Box>
@@ -72,10 +70,10 @@ export default function MenuBoardLayout({ children }: { children: React.ReactNod
                 alignItems: "center",
                 justifyContent: "space-between",
                 width: 212,
-                bgcolor: isActive("/owner/menu-board/items") ? "white" : "transparent",
+                bgcolor: activeSection === "menu-board/items" ? "white" : "transparent",
               }}
             >
-              <Typography sx={{ fontSize: 16, fontWeight: 600, color: isActive("/owner/menu-board/items") ? "#1F60FF" : "#6B7280" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: activeSection === "menu-board/items" ? "#1F60FF" : "#6B7280" }}>
                 메뉴 관리
               </Typography>
             </Box>
@@ -109,10 +107,10 @@ export default function MenuBoardLayout({ children }: { children: React.ReactNod
                 alignItems: "center",
                 justifyContent: "space-between",
                 width: 212,
-                bgcolor: isActive("/owner/menu-board/event-menu") ? "white" : "transparent",
+                bgcolor: activeSection === "menu-board/event-menu" ? "white" : "transparent",
               }}
             >
-              <Typography sx={{ fontSize: 16, fontWeight: 600, color: isActive("/owner/menu-board/event-menu") ? "#1F60FF" : "#6B7280" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: activeSection === "menu-board/event-menu" ? "#1F60FF" : "#6B7280" }}>
                 이벤트 팝업 관리
               </Typography>
             </Box>

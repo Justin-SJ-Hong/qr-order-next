@@ -30,6 +30,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
     reactStrictMode: true,
     poweredByHeader: false,
+    // 개발 환경에서 다른 origin 허용 (모바일 기기, 로컬 네트워크 등)
+    allowedDevOrigins: ['http://172.30.1.27:3000', '172.30.1.27:3000'],
     async headers() {
         return [
             {
